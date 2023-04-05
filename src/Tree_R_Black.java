@@ -31,6 +31,39 @@ public class Tree_R_Black {
 		}
 	}
 	
+	private Node rebalance(Node node) {
+		boolean needRebalance;
+		Node result = node;
+		do {
+			needRebalance = false;
+			if (result.rightChild != null && result.rightChild.color == Color.RED &&
+					(result.leftChild == null || result.leftChild.color == Color.BLACK)) {
+				needRebalance = true;
+				result = rightSwap(result);
+			}
+			if (result.leftChild != null && result.leftChild.color == Color.RED &&
+					(result.leftChild.leftChild != null && result.leftChild.leftChild.color == Color.BLACK)) {
+				needRebalance = true;
+				result = leftSwap(result);
+			}
+			if (result.rightChild != null && result.rightChild.color == Color.RED &&
+				 result.leftChild != null && result.leftChild.color == Color.RED) {
+				needRebalance = true;
+				colorSwap(result);
+			}
+		} while (needRebalance);
+		return result;
+	}
+	
+	private Node rightSwap(Node node) {
+		Node rightChild = node.rightChild;
+		Node betweenChild = rightChild.leftChild;
+		rightChild.leftChild = node;
+		node.rightChild = betweenChild;
+		rightChild.color = node.color;
+		node.color = Color.RED;
+		return rightChild;
+	}
 	private Node leftSwap(Node node) {
 		Node leftChild = node.leftChild;
 		Node betweenChild = leftChild.rightChild;
