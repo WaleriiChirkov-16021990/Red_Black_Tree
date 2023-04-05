@@ -3,6 +3,20 @@ import java.util.List;
 public class Tree_R_Black {
 	private Node root;
 	
+	public boolean add(int value) {
+		if (root != null) {
+			boolean result = addNode(root, value);
+			root = rebalance(root);
+			root.color = Color.BLACK;
+			return result;
+		} else {
+			root = new Node();
+			root.color = Color.BLACK;
+			root.value = value;
+			return true;
+		}
+	}
+	
 	private boolean addNode(Node node, int value) {
 		if (node.value == value) {
 			return false;
@@ -10,6 +24,7 @@ public class Tree_R_Black {
 			if (node.value > value) {
 				if (node.leftChild != null) {
 					boolean result = addNode(node.leftChild, value);
+					node.leftChild = rebalance(node.leftChild);
 					return result;
 				} else {
 					node.leftChild = new Node();
@@ -20,6 +35,7 @@ public class Tree_R_Black {
 			} else {
 				if (node.rightChild != null) {
 					boolean result = addNode(node.rightChild, value);
+					node.rightChild = rebalance(node.rightChild);
 					return result;
 				} else {
 					node.rightChild = new Node();
@@ -31,9 +47,9 @@ public class Tree_R_Black {
 		}
 	}
 	
-	private Node rebalance(Node node) {
-		boolean needRebalance;
+	private Node rebalance(Node node)  {
 		Node result = node;
+		boolean needRebalance;
 		do {
 			needRebalance = false;
 			if (result.rightChild != null && result.rightChild.color == Color.RED &&
@@ -42,12 +58,12 @@ public class Tree_R_Black {
 				result = rightSwap(result);
 			}
 			if (result.leftChild != null && result.leftChild.color == Color.RED &&
-					(result.leftChild.leftChild != null && result.leftChild.leftChild.color == Color.BLACK)) {
+					result.leftChild.leftChild != null && result.leftChild.leftChild.color == Color.RED) {
 				needRebalance = true;
 				result = leftSwap(result);
 			}
-			if (result.rightChild != null && result.rightChild.color == Color.RED &&
-				 result.leftChild != null && result.leftChild.color == Color.RED) {
+			if (result.leftChild != null && result.leftChild.color == Color.RED &&
+					result.rightChild != null && result.rightChild.color == Color.RED) {
 				needRebalance = true;
 				colorSwap(result);
 			}
@@ -73,8 +89,6 @@ public class Tree_R_Black {
 		node.color = Color.RED;
 		return leftChild;
 	}
-	
-	
 	private void colorSwap(Node node) {
 		node.rightChild.color = Color.BLACK;
 		node.leftChild.color = Color.BLACK;
